@@ -1,0 +1,100 @@
+#!/bin/sh
+## Wrote by Ernesto Medina: em1118@att.com Aug 23 2017 
+## PTPs
+LOG="$HOME/infra/logs/bounce_End.log"     
+ERR_LOG="$HOME/infra/logs/err.log"     
+MESSAGE="$HOME/infra/logs/email.html"     
+
+if [[ -e /opt/app/athena/"$App"/bin/run.wlst.ksh ]]; then
+  /opt/app/athena/$App/bin/run.wlst.ksh /opt/app/athena/infra/bounceEAR.py $URL $EAR $TargetWLMServer $App > $LOG
+  echo "Date:`date +"%Y_%m_%d_%T"` User:$User App:$App EAR:$EAR URL:$URL TargetWLMServer:$TargetWLMServer VTIER:$VTIER" >> $LOG
+
+## OMX
+elif  [[ -e /opt/app/"$VTIER"/appl/newton/bin/run.wlst.ksh ]]; then
+  /opt/app/$VTIER/appl/newton/bin/run.wlst.ksh ~/infra/bounceEAR.py $URL $EAR $TargetWLMServer $App > $LOG
+  echo "Date:`date +"%Y_%m_%d_%T"` User:$User App:$App EAR:$EAR URL:$URL TargetWLMServer:$TargetWLMServer VTIER:$VTIER" >> $LOG
+
+## AFF 
+elif  [[ -e /opt/app/"$VTIER"/appl/AFF ]]; then
+  ~/infra/run.wlst.aff.ksh ~/infra/bounceEAR.py $URL $EAR $TargetWLMServer $App > $LOG
+  echo "Date:`date +"%Y_%m_%d_%T"` User:$User App:$App EAR:$EAR URL:$URL TargetWLMServer:$TargetWLMServer VTIER:$VTIER" >> $LOG
+
+## ERR
+else 
+  echo "Nothing to do" > $ERR_LOG
+  echo "Date:`date +"%Y_%m_%d_%T"` User:$User App:$App EAR:$EAR URL:$URL TargetWLMServer:$TargetWLMServer VTIER:$VTIER" >> $ERR_LOG
+  MAILSUB="Failed"     
+  mail -s "Bounce Report $MAILSUB" -c em1118@att.com $User < $ERR_LOG
+fi
+
+## Get Bounce Result
+if grep -q succesfully $LOG ; then
+  MAILSUB="Succesful"        
+  ROW_COLOR="#90ee90" 
+else 
+  MAILSUB="Failed"     
+  ROW_COLOR="#f4e842"
+fi
+
+## Send Mail
+echo "To: $User" > $MESSAGE
+echo "From: dl-infra_ocx@att.com" >> $MESSAGE
+echo "Content-Type: text/html; " >> $MESSAGE
+echo "Subject: Bounce Report $MAILSUB" >> $MESSAGE
+echo "MIME-Version: 1.0" >> $MESSAGE
+echo "<html>" >> $MESSAGE
+echo "<body>" >> $MESSAGE
+echo "Hi All," >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "Status Report of the EAR: $EAR is: $MAILSUB" >> $MESSAGE
+echo "Node: $URL" >> $MESSAGE 
+echo "<br>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<table border=1 width=500 cellspacing=0 cellpadding=0" >> $MESSAGE
+echo "<tr bgcolor=4BACC6>" >> $MESSAGE
+echo "<td width=50> Bounce Phases</td>" >> $MESSAGE
+echo "<td width=50> EAR State </td>" >> $MESSAGE
+echo "<td width=50> Time (`date +%Z`) </td>" >> $MESSAGE
+echo "</tr>" >> $MESSAGE
+echo "<tr bgcolor=$ROW_COLOR>" >> $MESSAGE
+echo "<td>Initial</td>" >> $MESSAGE
+echo "<td>`grep "Current_State" ~/infra/logs/bounce_End.log | awk '{ print $2 }'`</td>" >> $MESSAGE
+echo "<td>`grep "Current_Time" ~/infra/logs/bounce_End.log | awk '{ print $2 }'`</td>" >> $MESSAGE
+echo "</tr>" >> $MESSAGE
+echo "<tr bgcolor=$ROW_COLOR>" >> $MESSAGE
+echo "<td>Stop</td>" >> $MESSAGE
+echo "<td>`grep "Stop_State" ~/infra/logs/bounce_End.log | awk '{ print $2 }'`</td>" >> $MESSAGE
+echo "<td>`grep "Stop_Time" ~/infra/logs/bounce_End.log | awk '{ print $2 }'`</td>" >> $MESSAGE
+echo "</tr>" >> $MESSAGE
+echo "<tr bgcolor=$ROW_COLOR>" >> $MESSAGE
+echo "<td>Start</td>" >> $MESSAGE
+echo "<td>`grep "Final_State" ~/infra/logs/bounce_End.log | awk '{ print $2 }'`</td>" >> $MESSAGE
+echo "<td>`grep "Final_Time" ~/infra/logs/bounce_End.log | awk '{ print $2 }'`</td>" >> $MESSAGE
+echo "</tr>" >> $MESSAGE
+echo "</table>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "<div>" >> $MESSAGE
+echo "Regards," >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "Infra OCX Team" >> $MESSAGE
+echo "<br>" >> $MESSAGE
+echo "</div>" >> $MESSAGE
+echo "</body>" >> $MESSAGE
+echo "</html>" >> $MESSAGE
+
+echo "Sending email........ to: $User" >> $LOG
+sendmail -i -t < $MESSAGE
+echo $? >> $LOG
+
+find ~/infra/logs/ -mtime +7 -exec rm -v {} \;
+
+## If Bounce fails
+if [ $MAILSUB -eq "Failed" ]; then 
+    exit 1
+fi
+

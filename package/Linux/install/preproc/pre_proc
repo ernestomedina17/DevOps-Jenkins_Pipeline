@@ -1,0 +1,17 @@
+#!/bin/sh
+mkdir -p ~/infra/logs
+DATE=`date +"%Y_%m_%d_%T"`
+echo "Date:$DATE User:$User App:$App EAR:$EAR URL:$URL TargetWLMServer:$TargetWLMServer VTIER:$VTIER" > ~/infra/logs/bounce_Start_"$DATE".log
+
+## AFF link creation
+if  [[ -e /opt/app/$VTIER/appl/AFF ]]; then
+    echo "No need to create link" >> ~/infra/logs/bounce_Start_"$DATE".log
+elif  [[ -e /opt/app/$VTIER/appl/AFF_GAMMA ]]; then
+    echo "Creating link AFF_GAMMA to AFF" >> ~/infra/logs/bounce_Start_"$DATE".log
+    ln -s -f -T /opt/app/$VTIER/appl/AFF_GAMMA /opt/app/$VTIER/appl/AFF
+elif  [[ -e /opt/app/$VTIER/appl/AFF_CLUSTER ]]; then
+    echo "Creating link AFF_CLUSTER to AFF" >> ~/infra/logs/bounce_Start_"$DATE".log
+    ln -s -f -T /opt/app/$VTIER/appl/AFF_CLUSTER /opt/app/$VTIER/appl/AFF
+else echo "No AFF installation found" >> ~/infra/logs/bounce_Start_"$DATE".log
+fi
+
