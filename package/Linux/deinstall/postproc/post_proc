@@ -1,2 +1,0 @@
-#!/bin/sh
-rm -Rfv /opt/app/athena/infra/
