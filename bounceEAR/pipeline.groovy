@@ -1,4 +1,4 @@
-pipeline { //Wrote by ernestom@amdocs.com
+pipeline { //Wrote by ernestomedina17
     agent any
     environment {
         String Not_Set = 'Not_set'
