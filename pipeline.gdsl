@@ -9,6 +9,8 @@ contributor(ctx) {
     property(name: 'env', type: 'org.jenkinsci.plugins.workflow.cps.EnvActionImpl.Binder')
     property(name: 'currentBuild', type: 'org.jenkinsci.plugins.workflow.cps.RunWrapperBinder')
     property(name: 'scm', type: 'org.jenkinsci.plugins.workflow.multibranch.SCMVar')
+    property(name: 'sayHello', type: 'org.jenkinsci.plugins.workflow.cps.global.UserDefinedGlobalVariable')
+    property(name: 'uploadSingleFileToLinux', type: 'org.jenkinsci.plugins.workflow.cps.global.UserDefinedGlobalVariable')
 }
 
 // Define default env vars
