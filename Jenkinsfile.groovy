@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Hello 2') {
             steps {
-                sayHello 'Ernesto'
+                sayHello 'Ernesto Medina'
             }
         }
     }
