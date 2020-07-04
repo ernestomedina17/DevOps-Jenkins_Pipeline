@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('sayHello') {
             steps {
-                sayHello
                 sayHello 'Ernesto'
+                sayHello
             }
         }
         stage('deplySingleFileToLinux') {
