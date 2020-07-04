@@ -1,16 +1,14 @@
 pipeline {
     agent any
-
     stages {
-        stage('Hello') {
+        stage('sayHello') {
             steps {
-                echo 'Hello World'
+                sayHello
+                sayHello 'Ernesto'
             }
         }
-        stage('Hello 2') {
-            steps {
-                sayHello 'Ernesto Medina'
-            }
+        stage('deplySingleFileToLinux') {
+            sh 'ls -l Jenkins_Pipeline/bounceEAR/jenkins_input_form.txt'
         }
     }
 }
