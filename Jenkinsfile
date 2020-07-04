@@ -4,7 +4,7 @@ pipeline {
         stage('sayHello') {
             steps {
                 script {
-                    sayHello
+                    sayHello()
                     sayHello 'Ernesto'
                 }
             }
