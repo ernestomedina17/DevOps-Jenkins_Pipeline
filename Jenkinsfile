@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     sayHello()
-                    sayHello 'Ernesto'
+                    sayHello('Ernesto')
                 }
             }
         }
