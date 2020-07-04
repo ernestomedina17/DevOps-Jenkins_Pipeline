@@ -16,9 +16,10 @@ pipeline {
                 sh 'mkdir -p directoryA/directoryB/'
                 sh "echo 'foo=var' > directoryA/directoryB/config.props"
                 sh 'ls -l directoryA/directoryB/config.props'
-                //script {   
+                script {
+                    def server = new SSHServer(this)
                     //uploadSingleFileToLinux()
-                //}
+                }
             }
         }
     }
