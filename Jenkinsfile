@@ -8,7 +8,9 @@ pipeline {
             }
         }
         stage('deplySingleFileToLinux') {
-            sh 'ls -l Jenkins_Pipeline/bounceEAR/jenkins_input_form.txt'
+            steps {
+                sh 'ls -l Jenkins_Pipeline/bounceEAR/jenkins_input_form.txt'
+            }
         }
     }
 }
