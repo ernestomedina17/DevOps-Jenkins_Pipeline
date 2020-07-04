@@ -11,7 +11,9 @@ pipeline {
         }
         stage('deplySingleFileToLinux') {
             steps {
-                sh 'ls -l Jenkins_Pipeline/bounceEAR/jenkins_input_form.txt'
+                sh 'mkdir -p directoryA/directoryB/'
+                sh 'echo "foo=var" > config.props'
+                sh 'ls -l directoryA/directoryB/config.props'
             }
         }
     }
